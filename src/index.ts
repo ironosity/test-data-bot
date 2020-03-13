@@ -38,6 +38,8 @@ type Field =
   | number
   | FieldGenerator
   | { [x: string]: Field | {} }
+  | null
+  | undefined
   | any[];
 
 type FieldsConfiguration<FactoryResultType> = {
@@ -59,7 +61,7 @@ interface BuildConfiguration<FactoryResultType> {
 }
 
 const isGenerator = (field: Field): field is FieldGenerator => {
-  return (field as FieldGenerator).generatorType !== undefined;
+  return (field as FieldGenerator)?.generatorType !== undefined;
 };
 
 type ValueOf<T> = T[keyof T];
@@ -101,7 +103,7 @@ export const build = <FactoryResultType>(
     let calculatedValue;
 
     if (isGenerator(fieldValue)) {
-      switch (fieldValue.generatorType) {
+      switch (fieldValue?.generatorType) {
         case 'sequence': {
           ++sequenceCounter;
           calculatedValue = fieldValue.call(
